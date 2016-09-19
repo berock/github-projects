@@ -1,0 +1,128 @@
+import random
+import os
+import sys
+import collections
+
+batter_location = 'inside' # batter's prefered pitch location. Considered in location selection
+batter_pitch = 'fastball' # batter's prefered pitch choice. considered in pitch selection
+batter_hits = 'L' # batter's hitting side.
+pitcher_throws = 'L' # pitchers throwning arm.
+runners = ['none', 'first base', 'RSP', 'bases loaded'] # runners on base. considered in pitch count. "RSP" runners in scoring position.
+apb = 4 # average balls thrown per batter
+pitch_count = 1
+balls = 0
+strikes = 0
+call = ['ball','strike'] # calls by umpire. random in testing. User selected in production
+innings = 1
+pitchLocation = ['inside', 'outside', 'up', 'low'] # random pitch location in testing. User selected in production
+pitch_selection = ['fourseam']  + ['sinker'] + ['cutter'] + ['curve'] + ['changeup'] # pitches the pitcher can throw
+pitches = ['fourseam']  + ['sinker'] * 5 + ['cutter'] + ['curve'] + ['changeup'] * 2 # occurance pitcher throws the pitches.
+pitch_sequence = {} # pitch sequence per inning.
+psi1 = {} # total pitch sequence
+tpc = {} # total pitch count. All pitch_counts in a list
+PitcherName = ""
+
+def welcome(PitcherName): # only needed in testing
+    start = input("would you like to send your batter to the plate? Y/n")
+    if start == 'n':
+        print("BYE!")
+        sys.exit()
+    else:
+        ## PitcherName = input("What is the pitcher name? ") # pitcher name saved in DB
+        return True
+
+##def nextPitch(): # only needed in testing
+##    start = input("would you like to throw the next pitch? Y/n")
+##    if start == 'n':
+##        print("BYE")
+##        sys.exit()
+##    else:
+##        return True
+
+# pitch thrown by pitcher. Random in testing. User selected in production.
+
+# umpire call. Random only used in testing. User selected in production
+# def umpire(call):
+ #   umpire = random.choice(call)
+#    print(umpire)
+#    if umpire == "ball":
+#        print("umpire called it a ball")
+#        print("The count is {} balls and {} strikes".format(balls,strikes))
+#    elif print("umpire called it a Strike"):
+#        print("The count is {} balls and {} strikes".format(balls,strikes))
+#        print('No umpire input')
+# runners on base....
+##def rob(runners):
+##    rob = random.choice(runners)
+##    if rob == 'none':
+##        print("There are no runners on base")
+##    elif rob == 'first base':
+##        print("There is a runner on first base")
+##    elif rob == 'RSP':
+##        print("There are runners in scoring position")
+##    else:
+##        print("The bases are loaded")
+##
+### pitch location...
+##def location(pitchLocation,rob):
+##    if rob == 'none' or 'first base':
+##        location = random.choice(pitchLocation)
+##        print ("The pitch was {}".format(location))
+##    else:
+##        location = random.choice(pitchLocation.remove('up','outside'))
+##        print ("the pitch was {}".format(location))
+
+
+
+welcome(PitcherName)
+innings = 1
+##print('inning # {}'.format(innings))
+while (innings <= 9):
+    pitch_count = 1
+    while (pitch_count <= apb):
+        thrown = random.choice(pitches)
+        ##print ("Pitch number {} was a {}".format(pitch_count,thrown))
+
+        pitch1Speed = range(87,91)
+        pitch2Speed = range(87,90)
+        pitch3Speed = range(84,89)
+        pitch4Speed = range(75,79)
+        pitch5Speed = range(78,82)
+        if thrown == pitch_selection[0]:
+            pitch_speed = random.choice(pitch1Speed)
+            ####print ("The pitch was {} mph".format(pitch_speed))
+        elif thrown == pitch_selection[1]:
+            pitch_speed = random.choice(pitch2Speed)
+            ##print ("The pitch was {} mph".format(pitch_speed))
+        elif thrown == pitch_selection[2]:
+            pitch_speed = random.choice(pitch3Speed)
+            ##print ("The pitch was {} mph".format(pitch_speed))
+        elif thrown == pitch_selection[3]:
+            pitch_speed = random.choice(pitch4Speed)
+            ##print ("The pitch was {} mph".format(pitch_speed))
+        elif thrown == pitch_selection[4]:
+            pitch_speed = random.choice(pitch5Speed)
+            ##print ("The pitch was {} mph".format(pitch_speed))
+        ##else:
+            ##print("The radar gun missed that pitch!")
+
+        pitch_sequence['Pitch {}'.format(pitch_count)] = "{} mph {}".format(pitch_speed,thrown)
+        orderedPS = collections.OrderedDict(sorted(pitch_sequence.items()))
+        psi1['Inning {}'.format(innings)] = orderedPS
+        orderedPSI1 = collections.OrderedDict(sorted(psi1.items()))
+
+        pitch_count = pitch_count + 1
+
+    tpc['{}'.format(innings)] = pitch_count - 1
+    innings = innings + 1
+    totalPitches = sum(tpc.values())
+    ##if innings != 10:
+        ##print('inning # {}'.format(innings))
+    ##else:
+        ##print('Game Over')
+print('The Pitcher threw {} pitches!'.format(totalPitches))
+
+for keys in orderedPSI1:
+	print(keys)
+	for values in orderedPSI1[keys]:
+		print(values, ':' ,psi1[keys][values])
